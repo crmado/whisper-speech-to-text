@@ -4,3 +4,4 @@ keyboard
 openai-whisper
 pyautogui
 argparse
+flask

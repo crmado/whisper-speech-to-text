@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import pyaudio
 import wave
 import threading
@@ -8,7 +10,7 @@ import argparse
 
 
 class AudioRecorder:
-    def __init__(self, chunk=1024, sample_format=pyaudio.paInt16, channels=1, fs=44100, filename="output.wav"):
+    def __init__(self, chunk=2048, sample_format=pyaudio.paInt16, channels=1, fs=22050, filename="output.wav"):
         self.chunk = chunk
         self.sample_format = sample_format
         self.channels = channels
@@ -19,6 +21,7 @@ class AudioRecorder:
         self.model = "base"
         self.language = "English"
         self.console = "en"
+        self.recording_device = 0  # 根据实际情况修改设备编号
         self.p = pyaudio.PyAudio()
         self.translations = {
             "en": {
@@ -54,7 +57,8 @@ class AudioRecorder:
     def console_language(self, console):
         self.console = console
         self.trans = self.translations[console]
-        print(f"Console language set to: {console}")
+        #print(f"Console language set to: {console}")
+        print("Console language set to: {}".format(console))
 
     def toggle_recording(self):
         self.recording = not self.recording
@@ -71,7 +75,7 @@ class AudioRecorder:
             channels=self.channels,
             rate=self.fs,
             frames_per_buffer=self.chunk,
-            input=True
+            input=True,
         )
         while self.recording:
             data = stream.read(self.chunk)
@@ -97,7 +101,9 @@ class AudioRecorder:
 
         transcription = self.transcribe_recording()
         print(self.trans["transcription"], transcription)
-        pyautogui.write(transcription)
+        #pyautogui.write(transcription)
+        print(transcription)
+
 
     def set_hotkey(self, hotkey):
         keyboard.add_hotkey(hotkey, self.toggle_recording, suppress=True)
@@ -111,6 +117,7 @@ class AudioRecorder:
 
     def set_model(self, model):
         self.model = whisper.load_model(model)
+        #self.model = whisper.Transcriber(model)
         print(self.trans["model"],  model)
 
 
